@@ -1,0 +1,417 @@
+{% load rest_framework %}
+{% load common_function %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<style>
+hr { 
+    display: block;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    margin-left: auto;
+    margin-right: auto;
+    border-style: inset;
+    border-width: 1px;
+} 
+</style>
+{% include "ERP/includes/header.html" %}
+<body>
+	<!-- Aside Start-->
+	{% include "ERP/includes/left_menu.html" %}
+	<!-- Aside Ends-->
+	<!--Main Content Start -->
+	<section class="content">
+		<!-- Header -->
+		{% include "ERP/includes/top_menu.html" %}
+		<!-- Header Ends -->
+		<!-- Page Content Start -->
+		<div class="wraper container-fluid">
+
+
+			<form method="post" name="frm" id="frm">
+				{% csrf_token %}
+				<div class="page-title">
+					<div class="col-md-6 ">
+						<h3 class="title">{{ module }}</h3>
+					</div>
+					<div class="col-md-6 text-right">
+						<a href="{% url 'ERP:project_list' %}"> <i
+							class="fa fa-eye fa-2x text-inverse"></i>
+						</a>
+					</div>
+
+				</div>
+
+				<div class="row">
+
+					{% if error_data or success_data%}
+
+					<div class="col-md-12">
+						<div {% if error_data  %} class="alert alert-danger"
+							{% endif %} {% if success_data  %} class="alert  alert-success"{% endif %}>
+							{% if error_data %} {{error_data.Error.message}} 
+							{% for error_details in error_data.Error.error_details %}
+							{{error_data..Error.error_details}} </Br> {{error_details.field}} ->
+							{{error_details.message}} {% endfor %} {% endif %} {% if
+							success_data %} <strong>Well done!</strong> {{success_data}}. {%
+							endif %}
+						</div>
+					</div>
+					{% endif %}
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">{{ module }}</h3>
+							</div>
+							<div class="panel-body">
+							<div class="col-md-12">
+								<div class="col-md-6">
+								<div class="form-group">
+										<label for="qty">Project Name</label> <input type="text"
+											class="form-control" id="project_name" name="project_name"
+											value="{{data.project_name}}" placeholder="Enter Project Name">
+									</div>
+								<div class="form-group">
+										<label for="customer_name">Customer Name</label> <input type="text"
+											class="form-control" id="customer_name" name=customer_name
+											value="{{data.customer.name}}" placeholder="Enter  Item Code">
+											<input type="hidden"
+											class="form-control" id="customer" name="customer" value="{{data.customer}}">
+								</div>
+									
+									<div class="form-group">
+										<label for="estimated_start_date">Estimate Start Date</label> <input type="text"
+											class="form-control" id="estimated_start_date" name="estimated_start_date"
+											value='{{data.estimated_start_date }}' placeholder="Date"
+											>
+									</div>
+								<div class="form-group">
+										<label for="estimated_end_date">Estimate End Date</label> <input type="text"
+											class="form-control" id="estimated_end_date" name="estimated_end_date"
+											value='{{data.estimated_end_date }}' placeholder="Date">
+									</div>
+								</div>
+								<div class="col-md-6">
+								<div class="form-group">
+										<label for="name">Estimate Amount</label> <input type="text"
+											class="form-control" id="estimated_amount" name=estimated_amount
+											value="{{data.estimated_amount}}" placeholder="Enter Estimated Amount">
+											
+									</div>
+        
+									<div class="form-group">
+										<label for="status">Status</label>
+										<select class="form-control" id="status"  name="status">
+											<option value=""></option>
+											<option value="1" {% if  data.status == 1 %}
+    selected="true" 
+    {% endif%} >Open</option>
+											<option value="2" {% if  data.status == 2 %}
+    selected="true"
+    {% endif%}>Close</option>
+										</select>
+										</div>
+								<div class="form-group">
+										<label for="description">Description</label> 
+										<textarea class="form-control" id="description" name="description">{{data.description}}</textarea>
+									</div>
+									
+								</div>
+								</div>
+<div class="col-md-12"><hr></div>
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="name">Item Name</label> <input type="text"
+											class="form-control" id="item_name" name=item_name
+											value="{{data.name}}" placeholder="Enter  Item Code">
+											<input type="hidden"
+											class="form-control" id="item" name="item">
+									</div>
+									<div class="form-group">
+										<label for="qty">Qty</label> <input type="text"
+											class="form-control" id="qty" name="qty"
+											value="{{data.qty}}" placeholder="Enter Qty">
+									</div>
+									
+									<div class="form-group">
+										<label for="rate">Rate</label> <input type="text"
+											class="form-control" id="rate" name="rate"
+											value="{{data.rate}}" placeholder="Enter Rate">
+									</div>
+									
+									</div>
+									<div class="col-md-6">
+									<div class="form-group">
+										<label for="amount">Amount</label> <input type="text"
+											class="form-control" id="amount" name="amount"
+											value="{{data.amount}}" placeholder="Enter Amount">
+									</div>
+									<div class="form-group">
+										<label for="discount">Discount</label> <input type="text"
+											class="form-control" id="discount" name="discount"
+											value="{{data.discount}}" placeholder="Enter Discount Amount">
+									</div>
+									<div class="form-group">
+										<label for="qty">Net Amount</label> <input type="text"
+											class="form-control" id="net_amount" name="net_amount"
+											value="{{data.name}}" placeholder="Enter Qty">
+									</div>
+									
+									
+									<div class="form-group {% if view_mode %} style="display: none"{% endif %}">
+										<button type="submit" class="btn btn-info submit_btn"
+											id="add_project">Add</button>
+										<button type="reset" class="btn btn-default reset_btn">Reset</button>
+									</div>
+									
+								</div>
+								<div class="col-md-12"><hr></div>
+								
+								<div class="col-md-12" id="items_div"></div>
+								
+								<!-- panel-body -->
+							</div>
+							<!-- panel -->
+
+						</div>
+
+
+					</div>
+
+
+
+
+					<div class="row">
+						<input type="hidden" name="project_id" id="project_id" value="{{data.id}}">
+						{% if  data.id %}
+						<input type="hidden" name="action" id="action" value="2">
+						
+						{% endif %}
+						<!-- Basic example -->
+						 <div class="col-md-12 text-right" {% if view_mode %} style="display: none"{% endif %}>
+							<div class="panel panel-default">
+							
+							
+								<div class="panel-body">
+									<button type="submit" class="btn btn-success submit_btn"
+										id="submit_frm">Submit</button>
+									<button type="reset" class="btn btn-default reset_btn">Reset</button>
+								</div>
+							
+							
+								
+							</div></div>
+						<!-- End row -->
+						</div>
+			</form>
+			<!-- Form-validation -->
+
+
+		</div>
+		<!-- Page Content Ends -->
+		<!-- Footer Start -->
+		{% include "ERP/includes/footer.html" %}
+		<!-- Footer Ends -->
+	</section>
+	<!-- Main Content Ends -->
+
+	{% include "ERP/includes/js_script.html" %}
+	{% include "ERP/includes/autocomplete.html" %}
+	<!-- js placed at the end of the document so the pages load faster -->
+</body>
+</html>
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"> </script> -->
+<!-- jQuery UI !-->
+
+<script>
+	
+	$(document).ready(function() {
+		$("#submit_frm").click(function() {
+			var x = confirm("Are you sure you want to Submit this entry?");
+			if (x) {
+				return true;
+			} else {
+
+				return false;
+			}
+		});
+		$('#estimated_start_date').datepicker({
+
+			dateFormat : 'dd-mm-yy'
+
+		});
+		$('#estimated_end_date').datepicker({
+
+			dateFormat : 'dd-mm-yy'
+
+		});
+		project_id = $("#project_id").val();
+		// alert(stockentry_id)
+
+		//alert(stockentry_id);
+		items(project_id);
+
+	});
+	$("#add_project").click(function() {
+
+		
+	FrmValidation();
+		form = $("#frm")
+		$("#add_stock").hide();
+
+		if ($("#action").val() == 2) {
+			url = "../../item_create";
+		} else {
+			url = "item_create";
+		}
+		$.ajax({
+			url : url,
+			data : form.serialize(),
+			type : "Post",
+			success : function(data) {
+
+				id = data.project_id;
+				//alert(data);
+				$("#project_id").val(id);
+				items(id)
+				//clear_data();
+				$("#add_stock").show();
+			},
+			error : function(textStatus, errorThrown) {
+				Success = false;//doesnt goes here
+				$("#add_stock").show()
+			}
+		});
+		return false;
+
+	});
+
+	$("#qty,#discount,#rate").keyup(function() {
+		rate = $("#rate").val();
+		qty = $("#qty").val();
+		amount = parseFloat(rate) * parseFloat(qty)
+		$("#amount").val(amount);
+		discount = $("#discount").val();
+		net_amount = parseFloat(amount) - parseFloat(discount);
+		$("#net_amount").val(net_amount);
+	});
+
+	function FrmValidation() {
+
+		/* 	$("#frm").validate({
+				rules : {
+					entry_date : {
+						required : true,
+					},
+					customer_name : {
+						required : true,
+					},
+					warehouse : {
+						required : true,
+					},
+					item_name : {
+						required : true,
+					},
+					qty : {
+						required : true,
+					      number: true
+					},
+					
+				},
+				
+
+			}); */
+
+		//return false;
+	}
+	$(function() {
+		$("#item_name").autocomplete({
+			source : "/erp/autocompletes/item_list_autocomplete/",
+			select : function(event, ui) { //item selected
+				var selectedObj = ui.item;
+				$("#item").val(selectedObj.id);
+				$("#taxgroup_id").val(selectedObj.tax_group);
+				$("#tax_per").val(selectedObj.tax_per);
+				$("#rate").val(selectedObj.buying_price);
+				$("#qty").val(0);
+
+			},
+			minLength : 2,
+
+		});
+	});
+
+	$(function() {
+		$("#customer_name").autocomplete({
+			source : "/erp/autocompletes/customer_list_autocomplete/",
+			select : function(event, ui) { //item selected
+				// AutoCompleteSelectHandler(event, ui)
+				var selectedObj = ui.item;
+				$("#customer").val(selectedObj.id);
+
+			},
+			minLength : 2,
+		});
+	});
+
+	function clear_data() {
+		$("#item_name").val("");
+		$("#item").val("");
+		$("#qty").val("");
+		$("#rate").val("");
+		$("#amount").val("");
+		$("#discount").val("");
+		$("#net_amount").val("");
+	}
+	function items(id) {
+		if ($("#action").val() == 2) {
+			url = "../../project_items";
+		} else {
+			url = "project_items";
+		}
+		$.ajax({
+			url : url,
+			data : {
+				"id" : id
+			},
+			contentType : 'application/json',
+
+			success : function(data) {
+				$("#items_div").html(data);
+				clear_data();
+			},
+
+		})
+	}
+	function items_delete(id) {
+		if ($("#action").val() == 2) {
+			url = "../../projectitems_delete";
+		} else {
+			url = "projectitems_delete";
+		}
+		var x = confirm("Are you sure you want to delete?");
+		if (x) {
+			$.ajax({
+				url : url,
+				data : {
+					"id" : id
+				},
+				contentType : 'application/json',
+
+				success : function(data) {
+					id = $("#project_id").val();
+
+					if (id) {
+						//alert(stockentry_id);
+						items(id);
+					}
+
+				},
+			})
+		} else {
+			return false;
+		}
+	}
+</script>

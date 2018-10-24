@@ -1,0 +1,43 @@
+{% load rest_framework %} {% load common_function %} {% load static %}
+<style>
+.items_table {
+	max-height: 400px;
+}
+</style>
+<div class="col-sm-12">
+	<div class="table-responsive items_table">
+		<table class="table">
+			<tr>
+				<th>S.No</th>
+				<th>Item For</th>
+				<th>Item Name</th>
+				<th>Qty</th>
+				<th>Rate</th>
+				<th>Amount</th>
+				<th>Action</th>
+			</tr>
+			{% for lists_val in data %}
+			<tr>
+				<td>{{forloop.counter}}</td>
+				<td>
+				{% show_single_field tableName="ERP_item" show_field_name="name" pk=lists_val.service_item_for as list_dorp %}
+					{{list_dorp}}
+				</td>
+				<td>
+				{% show_single_field tableName="ERP_item" show_field_name="name" pk=lists_val.service_item as list_dorp %}
+					{{list_dorp}}
+				</td>
+				<td>{{lists_val.service_item_qty}}</td>
+				<td>{{lists_val.service_item_rate}}</td>
+				<td>{{lists_val.service_item_amount}}</td>
+				<td><a href="javascript:void(0)"
+					onclick="return  service_items_delete({{lists_val.id}});"><i
+						class="fa fa-trash"></i></a></td>
+			</tr>
+			{% endfor %}
+		</table>
+
+
+
+	</div>
+</div>

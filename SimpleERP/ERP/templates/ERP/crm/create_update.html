@@ -1,0 +1,383 @@
+ {% load rest_framework %} {% load common_function %} {% load static %}
+<!DOCTYPE html>
+
+<html lang="en">
+
+<!-- Mirrored from coderthemes.com/velonic_3.0/admin_4/form-validation.html by HTTrack Website Copier/3.x [XR&CO'2013], Sat, 12 Nov 2016 20:52:49 GMT -->
+{% include "ERP/includes/header.html" %}
+
+<style>
+
+</style>
+<body>
+
+	<!-- Aside Start-->
+	{% include "ERP/includes/left_menu.html" %}
+	<!-- Aside Ends-->
+
+
+	<!--Main Content Start -->
+	<section class="content">
+
+		<!-- Header -->
+		{% include "ERP/includes/top_menu.html" %}
+		<!-- Header Ends -->
+
+
+		<!-- Page Content Start -->
+		<!-- ================== -->
+
+		<div class="wraper container-fluid">
+
+
+<form method="post" name="frm" id="frm">
+				{% csrf_token %}
+				<div class="page-title">
+					<div class="col-md-6 ">
+						<h3 class="title">{{ module }}</h3>
+					</div><br>
+					<div class="col-md-6 text-right">
+						<a href="{% url 'ERP:lead_list' %}"> <i
+							class="fa fa-eye fa-2x text-inverse"></i>
+						</a>
+					</div>
+
+				</div>
+
+				<div class="row">
+
+					{% if error_data or success_data%}
+
+					<div class="col-md-12">
+						<div {% if error_data  %} class="alert alert-danger"
+							{% endif %} {% if success_data  %} class="alert  alert-success"{% endif %}>
+							{% if error_data %} {{error_data.Error.message}} 
+							{% for error_details in error_data.Error.error_details %}
+							{{error_data..Error.error_details}} </Br> {{error_details.field}} ->
+							{{error_details.message}} {% endfor %} {% endif %} {% if
+							success_data %} <strong>Well done!</strong> {{success_data}}. {%
+							endif %}
+						</div>
+					</div>
+					{% endif %}
+				</div>
+
+
+
+
+
+
+
+
+					<div class="row">
+					<div class="col-md-12">
+				
+
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">{{ module }}</h3>
+							</div>
+							<div class="panel-body">
+							<div class="col-md-12">
+								<div class="col-md-6">
+								
+
+								<div class="form-group">
+										<label for="leadno">Lead No</label> <input type="text"
+											class="form-control" id="leadno" name=leadno
+											value="{{data.leadno}}" placeholder="Enter  Lead No">
+											
+									</div>
+
+
+								<div class="form-group">
+											<label for="lead_type">Lead Type </label> <select
+												class="form-control" name="lead_type" id="lead_type">
+												<option value="1">Send Quotations</option>
+												<option value="2">Send Quotations</option>
+												<option value="2">Send Quotations</option>
+
+											</select>
+										</div>
+								<div class="form-group">
+											<label for="lead_source">Lead Source</label> 
+											<select
+												class="form-control" name="lead_source" id="lead_source">
+												<option value="1">Direct Marketing</option>
+												<option value="2">Advertisement</option>
+
+											</select>
+									</div>
+									<div class="form-group">
+											<label for="comapany_name">Company Name </label>
+											{% companynamelist as datalist %} 
+											 <select
+												class="form-control" name="company" id="company">
+												 {% for lists_val in datalist %}
+												<option value="{{lists_val.id}}" {% if data.company ==  lists_val.id  %}
+									            selected="true" 
+									          {% endif%} >{{lists_val.name}}</option>
+									         {% endfor %}
+									         </select>
+									</div>
+									
+								
+								</div>
+								<div class="col-md-6">
+								
+        
+									<div class="form-group">
+											<label for="customer_name">Customer Name </label>
+											{% customernamelist as datalist %}
+											 <select
+												class="form-control" name="customer" id="customer">
+												{% for lists_val in datalist %}
+												<option value="{{lists_val.id}}" {% if data.customer ==  lists_val.id  %}
+									            selected="true" 
+									          {% endif%} >{{lists_val.name}}</option>
+									         {% endfor %}
+									         </select>
+										</div>
+								<div class="form-group">
+											<label for="contact_person">Contact Person </label>
+											{% contactpersonlist as datalist %}
+											 <select
+												class="form-control" name="contact_person" id="contact_person">
+												{% for lists_val in datalist %}
+												<option value="{{lists_val.id}}" {% if data.contact_person ==  lists_val.id  %}
+									            selected="true" 
+									          {% endif%} >{{lists_val.contact_person}}</option>
+									         {% endfor %}
+									         </select>
+										</div>
+
+								<div class="form-group">
+											<label for="contact_person_contact_no">Contact Person Contact No</label>
+											{% contactpersoncontactnolist as datalist %}
+											 <select
+												class="form-control" name="contact_person_contact_no" id="contact_person_contact_no">
+												{% for lists_val in datalist %}
+												<option value="{{lists_val.id}}" {% if data.contact_person_contact_no ==  lists_val.id  %}
+									            selected="true" 
+									          {% endif%} >{{lists_val.contact_person_contact_no}}</option>
+									         {% endfor %}
+									         </select>
+										</div>
+									
+								</div>
+								</div>
+<div class="col-md-12"><hr></div>
+
+<!-- AJAX design -->
+<div class="col-md-4" >
+									
+
+									<div class="form-group">
+										<label for="itemid">Product Name</label> <input type="text"
+											class="form-control" id="itemid" name=itemid
+											value="{{data.itemid}}" placeholder="Enter  Item Code">
+											<input type="hidden"
+											class="form-control" id="item" name="item">
+									</div>
+
+										<div class = "form-group"><label for="quantity">Quantity</label><input type="text" class="form-control" id="quantity" name="quantity" placeholder="Enter Quantity" value="{{ data.quantity }}" > 
+											<input type="text" name="leadid" id="leadid" style="display:none;" value={{data.id}}>
+										</div>
+
+										
+									
+
+									
+									
+
+									
+									<div class="form-group {% if view_mode %}"" style="display: none"{% endif %}">
+										<button type="submit" class="btn btn-info submit_btn"
+											id="add_item">Add</button>
+										<button type="reset" class="btn btn-default reset_btn">Reset</button>
+									</div>
+									
+									
+									
+
+	
+								</div>
+								<div class="col-md-8" id="lead_enquery_div"></div>
+								<div class="col-md-12"></div>
+								
+								
+	<!-- End AJAX design  -->									
+									
+									
+									
+									
+								</div></div>
+								</div></div>
+								
+
+
+								<div class="row">
+
+						<!-- Basic example -->
+						<div class="col-md-12 text-right" {% if view_mode %} style="display: none"{% endif %}>
+							<div class="panel panel-default">
+							
+							
+								<div class="panel-body">
+									<button type="submit" class="btn btn-success submit_btn"
+										id="submit_frm">Submit</button>
+									<button type="reset" class="btn btn-default reset_btn">Reset</button>
+								</div>
+							
+							
+								<!-- panel-body -->
+							</div>
+							<!-- panel -->
+						</div>
+										
+									</div>
+								
+								
+								<!-- panel-body -->
+							
+							<!-- panel -->
+
+						</div>
+
+
+					</div>
+
+
+
+
+
+</form>
+
+
+			
+			{% include "ERP/includes/footer.html" %}
+			
+	</section>
+
+
+	{% include "ERP/includes/js_script.html" %} 
+	{% include "ERP/includes/autocomplete.html" %}
+
+	<!-- js placed at the end of the document so the pages load faster -->
+
+
+
+</body>
+
+
+<!-- Mirrored from coderthemes.com/velonic_3.0/admin_4/form-validation.html by HTTrack Website Copier/3.x [XR&CO'2013], Sat, 12 Nov 2016 20:52:50 GMT -->
+</html>
+<script>
+
+
+$(document).ready(function() {
+		$("#submit_frm").click(function() {
+			var x = confirm("Are you sure you want to Submit this entry?");
+			if (x) {
+
+				return true;
+				
+			} else {
+
+				return false;
+			}
+		});
+
+		leadid = $("#leadid").val();
+		if (leadid) {
+			
+			//crmentry_items(leadid);
+		}
+	});
+	$("#add_item").click(function() {
+
+		FrmValidation();
+		form = $("#frm")
+		$.ajax({
+			url : "../../items_create/",
+			data : form.serialize(),
+			type : "Post",
+			success : function(data) {
+
+				id = data.items_entry;
+				//crmentry_items(id);
+				$("#leadid").val(id);
+				clear_data();
+				$("#add_item").show();
+			},
+			error : function(textStatus, errorThrown) {
+				Success = false;//doesnt goes here
+				$("#add_item").show()
+			}
+		})
+		return false;
+	});
+
+	function FrmValidation() {
+		$("#add_item").hide();
+		$("#frm").validate({
+			rules : {
+				leadno : {
+					required : true,
+				},
+				lead_type : {
+					required : true,
+				},
+				lead_source : {
+					required : true,
+				},
+
+			},
+		});
+
+		//return false;
+
+	}
+
+
+
+	$(function() {
+		$("#itemid").autocomplete({
+			source : "/erp/autocompletes/item_list_autocomplete/",
+			select : function(event, ui) { //item selected
+				AutoCompleteSelectHandler(event, ui)
+			},
+			minLength : 2,
+		});
+	});
+
+	function AutoCompleteSelectHandler(event, ui) {
+		var selectedObj = ui.item;
+		$("#item").val(selectedObj.id);
+	}
+	function clear_data() {
+		$("#itemid").val("");
+		$("#item").val("");
+		$("#quantity").val("");
+	}
+	function crmentry_items(id) { //alert("test")
+		$.ajax({
+			url : "../crmentry_items/",
+			data : {
+				"id" : id
+			},
+			contentType : 'application/json',
+
+			success : function(data) {
+				$("#lead_enquery_div").html(data);
+
+			},
+		})
+	}
+
+	
+
+
+
+	
+</script>

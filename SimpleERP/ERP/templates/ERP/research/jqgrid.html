@@ -1,0 +1,228 @@
+{% load rest_framework %} {% load common_function %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+{% include "ERP/includes/header.html" %}
+<body>
+	<!-- Aside Start-->
+	{% include "ERP/includes/left_menu.html" %}
+	<!-- Aside Ends-->
+	<!--Main Content Start -->
+	<section class="content">
+		<!-- Header -->
+		{% include "ERP/includes/top_menu.html" %}
+
+		<!-- Header Ends -->
+		<!-- Page Content Start -->
+		<div class="wraper container-fluid">
+
+
+			<form method="post" name="frm" id="frm">
+				{% csrf_token %}
+				<div class="page-title">
+					<div class="col-md-6 ">
+						<h3 class="title">{{ module }}</h3>
+					</div>
+					<div class="col-md-6 text-right">
+						<a href="{% url 'ERP:list_currency' %}"> <i
+							class="fa fa-eye fa-2x text-inverse"></i>
+						</a>
+					</div>
+
+				</div>
+
+				<div class="row"></div>
+				<div class="row">
+					<div class="col-md-12">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">{{ module }} Information</h3>
+							</div>
+							<div class="panel-body" id="panel">
+
+								<table id="jqGrid" class="table"></table>
+								<div id="jqGridPager"></div>
+
+
+								
+								<!-- panel-body -->
+							</div>
+							<!-- panel -->
+
+						</div>
+
+
+					</div>
+
+
+
+
+				</div>
+
+				<!-- Basic example -->
+
+				<!-- End row -->
+			</form><button id="export">Export</button>
+			<!-- Form-validation -->
+
+
+		</div>
+		<!-- Page Content Ends -->
+		<!-- Footer Start -->
+
+		{% include "ERP/includes/footer.html" %}
+		<!-- Footer Ends -->
+	</section>
+	<!-- Main Content Ends -->
+
+	{% include "ERP/includes/js_script.html" %}
+{% include "ERP/includes/jqgrid.html" %}
+	<!-- js placed at the end of the document so the pages load faster -->
+</body>
+</html>
+<script type="text/javascript"> 
+    
+        $(document).ready(function () {
+        	//alert("TEst")
+        	cols=['CustomerName', 'BillNo', 'BillAmount', 'TaxAmount', 'NetAmount','PaidAmount','BalanceAmount'	];
+        	model= [
+              
+	{
+							label : 'Category Name',
+							name : 'CustomerName',
+							key : true,
+							width : 75
+						}, {
+							label : 'Category Name',
+							name : 'BillNo',
+							width : 150
+						}, {
+							label : 'Category Name',
+							name : 'BillAmount',
+							width : 150
+						}, {
+							label : 'Category Name',
+							name : 'TaxAmount',
+							width : 150
+						}, {
+							label : 'Category Name',
+							name : 'NetAmount',
+							width : 150
+						}, {
+							label : 'Category Name',
+							name : 'PaidAmount',
+							width : 150
+						}, {
+							label : 'Category Name',
+							name : 'BalanceAmount',
+							width : 150
+						},
+
+						]
+						var crf_token = $('[name="csrfmiddlewaretoken"]').attr(
+								'value');
+						$("#jqGrid").jqGrid(
+								{
+									url : '../jqgrid_data',
+									mtype : "GET",
+									datatype : "json",
+									page : 1,
+									//colNames : cols,
+									colModel : [
+							              
+										{
+																label : 'Customer Name',
+																name : 'CustomerName',
+																key : true,
+																width : 75
+															}, {
+																label : 'BillNo ',
+																name : 'BillNo',
+																width : 150
+															}, {
+																label : 'BillAmount',
+																name : 'BillAmount',
+																formatter: 'number',
+																align: 'right',
+																width : 150
+															}, {
+																label : 'TaxAmount',
+																name : 'TaxAmount',
+																formatter: 'number',
+																align: 'right',
+																width : 150
+															}, {
+																label : 'NetAmount',
+																name : 'NetAmount',
+																formatter: 'number',
+																align: 'right',
+																width : 150
+															}, {
+																label : 'PaidAmount',
+																name : 'PaidAmount',
+																formatter: 'number',
+																align: 'right',
+																width : 150
+																
+															}, {
+																label : 'BalanceAmount',
+																name : 'BalanceAmount',
+																formatter: 'number',
+																align: 'right',
+																width : 150
+															},
+
+															],
+									headers : {
+										"X-CSRFToken" : crf_token
+									},
+									caption : 'My first grid',
+									rowNum : 20,
+									rowList : [ 10, 20, 50, 100, 500, 1000,
+											2000, 5000,10000 ],
+											
+											
+									pager : "#jqGridPager",
+									rownumbers : true, // show row numbers
+									loadonce: true,
+									viewrecords: true,
+					                footerrow: true,
+					                userDataOnFooter: true,
+					                userDataOnFooter: true,
+									
+								})
+						var outerwidth = $("#panel").width() - (10 / 100);
+						//alert(outerwidth);
+						$('#jqGrid').setGridWidth(outerwidth);
+						$('#jqGrid').setGridHeight(500);
+						$("#prev_jqGridPager").html("Prev");
+						$("#next_jqGridPager").html("Next");
+						$("#export").on("click", function() {
+							$("#jqGrid").jqGrid("exportToPdf",{
+								title: 'jqGrid Export to PDF',
+								orientation: 'portrait',
+								pageSize: 'A4',
+								description: 'description of the exported document',
+								customSettings: null,
+								download: 'download',
+								includeLabels : true,
+								includeGroupHeader : true,
+								includeFooter: true,
+								fileName : "jqGridExport.pdf"
+							})
+						
+										$("#jqGrid").jqGrid(
+															"exportToExcel",
+															{
+																includeLabels : true,
+																includeGroupHeader : true,
+																includeFooter : true,
+																fileName : "jqGridExport.xlsx",
+																maxlength : 40
+															// maxlength for visible string data 
+															})
+										})
+					});
+</script>
+

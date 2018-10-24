@@ -1,0 +1,185 @@
+{% load rest_framework %}
+{% load common_function %}
+
+<!DOCTYPE html>
+<html lang="en">    
+
+{% include "ERP/includes/header.html" %}
+    <body>
+        <!-- Aside Start-->
+        {% include "ERP/includes/left_menu.html" %}
+        <!-- Aside Ends-->
+        <!--Main Content Start -->
+        <section class="content">
+            <!-- Header -->
+           {% include "ERP/includes/top_menu.html" %}
+            <!-- Header Ends -->
+            <!-- Page Content Start -->
+            <div class="wraper container-fluid">
+              
+               
+               <form  method="post">   
+                 {% csrf_token %}
+                <div class="page-title"> 
+                    <div class="col-md-6 ">
+                        <h3 class="title"> {{ module }} List</h3> 
+                    </div>
+                    <div class="col-md-6 text-right">
+                     <a href="{% url 'ERP:lead_create' %}">  <i class="fa fa-plus fa-2x text-inverse"></i> </a>
+                    </div>
+                        
+                  </div>
+                  <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                           <div class="panel-heading">
+                            <h3 class="panel-title">{{ module }} List
+                                <span class="pull-right">
+                                 <div class="dropdown pull-right">
+                                    <button class="btn  dropdown-toggle" type="button" data-toggle="dropdown" style="padding: 2px 10px;">
+                                     <span class="caret"></span></button>
+                                         <ul class="dropdown-menu pull-right">
+                                              <li><a href="#">PDF</a></li>
+                                              <li><a href="#">Excel</a></li>
+                                        </ul>
+                                  </div>
+                                </span>  
+                            </h3>
+                            </div><div class="panel panel-default">
+                           
+                            <div class="col-lg-12">
+                        <div class="portlet"><!-- /primary heading -->
+                            <div class="portlet-heading">
+                                <h3 class="portlet-title text-dark text-uppercase">
+                                    Search
+                                </h3>
+                                <div class="portlet-widgets">
+                                    <a href="{% url 'ERP:customer_list' %}"><i class="ion-refresh"></i></a>
+                                    <span class="divider"></span>
+                                    <a data-toggle="collapse" data-parent="#accordion1" href="#portlet1" class="" aria-expanded="true"><i class="ion-minus-round"></i></a>
+                                    <span class="divider"></span>
+                                   
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div id="portlet1" class="panel-collapse collapse" aria-expanded="true" ><div class="row"> 
+                            <form  method="post">   
+                               <div class="col-md-6">  
+                                    <div class="form-group">
+                                        <label for="name">Name</label>
+                                        <input type="text" class="form-control" id="name" name="name"  value="{{custom_filter.name}}" placeholder="Enter Name">
+                                    </div>
+                                   
+                                    
+                                   </div>
+                               <div class="col-md-6"> 
+                                    <div class="form-group">
+                                        <label for="primary_contact_no">Contact No</label>
+                                        <input type="text" class="form-control" id="primary_contact_no" name="primary_contact_no" placeholder="Enter Contact No" value="{{custom_filter.primary_contact_no}}">
+                                    </div>
+                                    
+                                   </div>
+                                <div class="col-md-6"> 
+                               <div class="form-group">
+                                       {% drop_down_list tableName="ERP_customergroup" show_field_name="name" store_field_name="id" as list_dorp %}
+                                       
+
+                                        <label for="customergroup">customer Group <span class="err_msg">*</span></label>
+                                        <select class="form-control" id="customergroup" name="customergroup" >
+                                            <option value="">-- Select customer  Group -- </option>
+                                            {% for list_dorp_val in list_dorp %}
+                                                <option value="{{ list_dorp_val.id }}" 
+                                                {% if list_dorp_val.id == data.customergroup %} selected="true" 
+   											{% endif%} > {{ list_dorp_val.text }} </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div> 
+                                    </div>
+                                    <div class="col-md-12 pull-right text-right"><button type="submit" class="btn btn-primary submit_btn">Search</button></div>
+                                </form>
+                           </div>
+                            </div>
+                             </div> <!-- /Portlet -->
+                         </div>
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-md-12 col-sm-12 col-xs-12 text-right">
+                                    
+                                    </div>
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <div class="table-responsive">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th> Lead No</th>
+                                                        <th>Company Name</th>
+                                                        <th>Customer Name</th>
+                                                        <th>Contact Person</th>
+                                                        
+                                                        <th>Contact Person No</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+
+                                                    {% for lists_val in data %}
+                                                    <tr>
+                                                        <td>{{forloop.counter}}</td>
+                                                         <td>{{lists_val.leadno}}</td>
+                                                          <td>
+                                                          {% companylista id=lists_val.company as company_name %}{{company_name}}
+                                                        </td>
+
+                                                        
+                                                        <td>
+                                                          {% customerlista id=lists_val.customer as customer_name %}{{customer_name}}
+                                                        </td>
+                                                       
+                                                        <td>
+                                                          {% contactpersonlista id=lists_val.contact_person as contactperson %}{{contactperson}}
+
+                                                        </td>
+                                                        
+                                                        <td>
+                                                          {% contactpersonnolista id=lists_val.contact_person_contact_no as contactpersonno %}{{contactpersonno}}
+
+                                                        </td>
+                                                        <td>
+                                                        <div class="dropup pull-right" >
+                                                        <button class="btn  dropdown-toggle" type="button" data-toggle="dropdown" style="padding: 2px 10px;">
+                                                         <span class="caret"></span></button>
+                                                        <ul class="dropdown-menu pull-right" syle="z-index:1000px">
+                                                        <li><a href="/erp/crm/update/{{ lists_val.id }}"><i class="fa fa-pencil"></i></a></li>
+                                                        <li><a href="/erp/crm/view/{{ lists_val.id }}"><i class="fa fa-eye"></i></a></li>
+                                                         <li><a href="/erp/crm/delete/{{ lists_val.id }}" onclick="return confirm_delete();" ><i class="fa fa-trash" ></i></a></li>
+                                                        </ul>
+                                                        </div>
+                                                     </td>
+                                                    </tr>
+                                                   {% endfor %}
+                                                    
+                                                    
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                  </form>
+             </div>
+            <!-- Page Content Ends -->
+            <!-- Footer Start -->
+            {% include "ERP/includes/footer.html" %}
+            <!-- Footer Ends -->
+        </section>
+        <!-- Main Content Ends -->
+    
+ {% include "ERP/includes/js_script.html" %}
+        <!-- js placed at the end of the document so the pages load faster -->
+    </body>
+</html>

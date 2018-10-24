@@ -1,0 +1,90 @@
+{% load rest_framework %} {% load common_function %} {% load static %}
+
+<div class="modal-body">
+
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Service Items</h4>
+				</div>
+
+				<div class="modal-body">
+
+					<div class="col-md-12">
+						<div class="col-md-6">
+							<div class="panel panel-default">
+
+								<div class="panel-body">
+									<div class="form-group">
+										<label for="service_item_for">Service For</label>
+										<select id="service_item_for" name="service_item_for" class="form-control">
+										<option value="">--Select Service Name--</option>
+										{% for lists_val in data %}
+										<option value="{{lists_val.item_id}}">{{lists_val.item.name}}</option>
+										{% endfor %}
+										</select>
+									</div>
+									<div class="form-group">
+										<label for="service_item_name">Item</label> <input type="text"
+											class="form-control" id="service_item_name" name="service_item_name"
+											value="">
+											<input type="hidden"
+											class="form-cohntrol" id="service_item" name="service_item"
+											value="">
+									</div>
+
+
+									<div class="form-group">
+										<label for="service_serial_no">Serial No</label>
+										<textarea class="form-control" id="service_serial_no"
+											name="service_serial_no"></textarea>
+									</div>
+									<div class="form-group">
+										<label for="service_batch_no">Batch No</label> <input type="text"
+											class="form-control" id="service_batch_no" name="service_batch_no" value="">
+									</div>
+
+
+								</div>
+								<!-- panel-body -->
+							</div>
+							<!-- panel -->
+
+						</div>
+						<div class="col-md-6">
+							<div class="panel panel-default">
+
+								<div class="panel-body">
+									<div class="form-group">
+										<label for="rate">Rate</label> <input type="text"
+											class="form-control" id="service_item_rate" name="service_item_rate"
+											placeholder="Rate" value="" onkeyup="return service_amount_calculation();">
+									</div>
+									<div class="form-group">
+										<label for="item_code">Qty</label> <input type="text"
+											class="form-control" id="service_item_qty" name="service_item_qty"
+											value="{{data.qty}}" onkeyup="return service_amount_calculation();">
+									</div>
+									<div class="form-group">
+										<label for="amount">Amount</label> <input type="text"
+											class="form-control" id="service_item_amount"
+											name="service_item_amount" placeholder="Enter Amount" value=""
+											
+											>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-success" 
+						onclick="return service_items_add();"  data-dismiss="modal">Save</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+
+
+			</div>
+			
+			
+			

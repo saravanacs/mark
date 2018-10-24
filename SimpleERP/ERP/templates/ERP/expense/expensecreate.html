@@ -1,0 +1,277 @@
+{% load rest_framework %}
+{% load common_function %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">    
+
+{% include "ERP/includes/header.html" %}
+    <body>
+        <!-- Aside Start-->
+        {% include "ERP/includes/left_menu.html" %}
+        <!-- Aside Ends-->
+        <!--Main Content Start -->
+        <section class="content">
+            <!-- Header -->
+           {% include "ERP/includes/top_menu.html" %}
+            <!-- Header Ends -->
+            <!-- Page Content Start -->
+            <div class="wraper container-fluid">   
+               <form  method="post" name="frm" id="frm">   
+                 {% csrf_token %}
+                <div class="page-title"> 
+                    <div class="col-md-6 ">
+                        <h3 class="title"> {{ module }}</h3> 
+                    </div>
+                    <div class="col-md-6 text-right">
+                     <a href="{% url 'ERP:list_expense' %}">  <i class="fa fa-eye fa-2x text-inverse"></i> </a>
+                    </div>
+                        
+                  </div>
+                 
+                 <div class="row">
+                                
+                                {% if  error_data  or  success_data%}
+                                
+                                 <div class="col-md-12">
+                                    <div   {% if  error_data  %} class="alert alert-danger"  {% endif %} {% if  success_data  %} class="alert  alert-success"  {% endif %}>
+                                    {% if  error_data  %}
+                                        {{error_data.Error.message}} 
+                                    
+                                         {% for  error_details in error_data.Error.error_details %}
+                                                {
+                                                </Br>
+                                                {{error_details.field}} -> {{error_details.message}}
+                                          {% endfor %}
+                                 
+                                    {% endif %}
+                                    {% if  success_data %}
+                                        <strong>Well done!</strong> {{success_data}}.
+                                    {% endif %}
+                                    </div>
+                                </div>
+                               {% endif %}
+                   </div>
+                <div class="row">
+                        <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading"><h3 class="panel-title">{{ module }} Information</h3>
+ </div>
+                            <div class="panel-body">
+                            <div class="form-group">
+										<label for="expense_date">Entry Date<span class="err_msg">*</span></label> <input type="text"
+											class="form-control" id="expense_date" name="expense_date"
+											value='{{data.expense_date}}' placeholder="Date">
+											
+									</div>
+                                    <div class="form-group">
+                                       {% drop_down_list tableName="ERP_expensecategory" show_field_name="category_name" store_field_name="id" as list_dorp %}
+
+
+                                        <label for="expense_category">Category<span class="err_msg">*</span></label>
+                                        <select class="form-control" id="expense_category" name="expense_category">
+                                            <option value="">-- Select Category -- </option>
+                                            {% for list_dorp_val in list_dorp %}
+                                                <option value="{{ list_dorp_val.id }}"
+												      {% if list_dorp_val.id == data.expense_category %}
+    selected="true" 
+    {% endif%} 
+
+                                                > {{ list_dorp_val.text }} </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                   
+                                       
+                                    <div class="form-group">
+                                        <label class="col-md-12 control-label">Tax Type<span class="err_msg">*</span></label>
+                                        <div class="col-md-12">
+                                            <div class="radio-inline">
+                                                <label class="cr-styled" for="bill1">
+                                                    <input type="radio" class="form-control bill" id="bill1" name="bill" value="1" {% if data.bill %}
+    checked="true" 
+    {% endif%} > 
+                                                    <i class="fa"></i>
+                                                    With Tax 
+                                                </label>
+                                            </div>
+                                            <div class="radio-inline">
+                                                <label class="cr-styled" for="bill2">
+                                                    <input type="radio" class="form-control bill" id="bill2" name="bill" value="0" {% if not data.bill %}
+    checked="true" 
+    {% endif%} > 
+                                                    <i class="fa"></i> 
+                                              Without Tax
+                                                </label>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                    <div class="form-group tax_billing">
+                                        <label for="supplier">Supplier<span class="err_msg">*</span></label>
+                                        <input type="text" class="form-control" id="supplier" name="supplier" value="{{data.supplier}}">
+                                        
+                                    </div>
+                                     <div class="form-group tax_billing">
+                                        <label for="bill_no">Bill No<span class="err_msg">*</span></label>
+                                        <input type="text" class="form-control" id="bill_no" name="bill_no" value="{{data.bill_no}}">
+                                    </div>
+                                  
+                                   <div class="form-group tax_billing">
+                                       {% drop_down_list tableName="ERP_taxgroup" show_field_name="name" store_field_name="id" as list_dorp %}
+                                       
+
+                                        <label for="default_currency">Tax Group<span class="err_msg">*</span></label>
+                                        <select class="form-control" id="tax" name="tax">
+                                            <option value="">-- Select Tax Group -- </option>
+                                            
+                                            {% for list_dorp_val in list_dorp %}
+                                             {% show_single_field tableName="ERP_taxgroup" show_field_name="tax_per" pk=list_dorp_val.id as tax_per %}
+                                                <option value="{{ list_dorp_val.id }}"  tax_per="{{tax_per}}"
+                                                {% if list_dorp_val.id == data.tax %}
+    selected="true" 
+    {% endif%} 
+
+                                                > {{ list_dorp_val.text }} </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>  
+                                      <div class="form-group">
+                                        <label for="expense_amt">Expense Amount<span class="err_msg">*</span></label>
+                                        <input type="text" class="form-control" id="expense_amt" name="expense_amt" value="{{data.expense_amt}}" placeholder="Enter Expense Amount">
+                                         <input type="hidden" class="form-control" id="tax_per" name="tax_per" value="{{data.tax_per}}" placeholder="Enter Expense Amount">
+                                         <input type="hidden" class="form-control" id="taxamount" name="taxamount" value="{{data.taxamount}}" placeholder="Enter Expense Amount">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="net_total">Net Amount<span class="err_msg">*</span></label>
+                                        <input type="text" class="form-control" id="net_total" name="net_total" value="{{data.net_total}}">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="description">Description<span class="err_msg">*</span></label>
+                                        <textarea class="form-control" id="description" name="description">
+                                        {{data.description}}
+
+                                        </textarea>
+                                    </div>
+                                                                    
+                                    
+                                    <!-- panel-body -->
+                        </div> <!-- panel -->
+
+                    </div>
+
+
+ </div>
+
+
+                    
+
+                <div class="row">
+
+                    <!-- Basic example -->
+                    <div class="col-md-12 text-right"  {% if view_mode %} style="display:none" {% endif%}>
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                    <button type="submit" class="btn btn-success submit_btn" id="submit_frm" >Submit</button>
+                                    <button type="reset" class="btn btn-default reset_btn">Reset</button>
+                            </div><!-- panel-body -->
+                        </div> <!-- panel -->
+                    </div>
+                <!-- End row -->
+                 </form>
+                <!-- Form-validation -->
+              
+                
+            </div>
+            <!-- Page Content Ends -->
+            <!-- Footer Start -->
+            {% include "ERP/includes/footer.html" %}
+            <!-- Footer Ends -->
+        </section>
+        <!-- Main Content Ends -->
+    
+ {% include "ERP/includes/js_script.html" %}
+ {% include "ERP/includes/autocomplete.html" %}
+        <!-- js placed at the end of the document so the pages load faster -->
+    </body>
+</html>
+<script>
+$(document).ready(function() {
+    
+	$("#submit_frm").click(function() {
+			FrmValidate();
+			//alert("RE:");
+		});
+		$('#expense_date').datepicker({
+
+			dateFormat : 'dd-mm-yy'
+
+		});
+		$(".tax_billing").hide();
+		$(".bill").change(function() {
+			//alert("Rengaraj");
+
+			if (($(this).prop("checked"))) {
+
+				if ($(this).val() == 1) {
+					$(".tax_billing").show()
+				} else {
+					$(".tax_billing").hide();
+				}
+			} else {
+				$(".tax_billing").hide();
+			}
+		});
+		//alert($("#bill1").prop("checked"));
+		if($("#bill1").prop("checked")){
+			$(".tax_billing").show();
+		}
+		$("#expense_amt").keyup(function(){
+			net_amount_calculation();
+		});
+		$("#tax").change(function(){
+			net_amount_calculation();
+		});
+
+	});
+	function net_amount_calculation()
+	{
+		tax_per=0
+		if ($("#bill1").prop("checked")) {
+			
+			var tax_group = $("#tax").find('option:selected'); 
+	        var tax_per = tax_group.attr("tax_per");
+	        //alert(tax_per);
+	        if(!tax_per)
+	        	{
+	        	tax_per=0
+	        	}
+	        //alert(tax_per);
+		}
+		$("#tax_per").val(tax_per);
+		
+		expense_amount=parseFloat($("#expense_amt").val());
+		taxamount=expense_amount*parseFloat(tax_per)/100;
+		taxamount=taxamount.toFixed(2);
+		//console.log(taxamount);
+		$("#taxamount").val(taxamount);
+		console.log(expense_amount);
+		net_amt=parseFloat(taxamount)+parseFloat(expense_amount);
+		//console.log(net_amt);	
+		net_amt=net_amt.toFixed(2);
+		$("#net_total").val(net_amt);
+	}
+	function FrmValidate() {
+		$("#frm").validate({
+			rules : {
+				name : {
+					required : true,
+				},
+				country : {
+					required : true,
+				}
+			}
+		});
+	}
+</script>

@@ -1,0 +1,789 @@
+{% load rest_framework %}
+{% load common_function %}
+{% load static %}
+<!DOCTYPE html>
+
+<html lang="en">
+
+<!-- Mirrored from coderthemes.com/velonic_3.0/admin_4/form-validation.html by HTTrack Website Copier/3.x [XR&CO'2013], Sat, 12 Nov 2016 20:52:49 GMT -->
+{% include "ERP/includes/header.html" %}
+
+<style>
+.vl {
+	border-left: 3px solid #3960d1;
+	height: 500px;
+}
+.btn_sales
+{
+min-width:100px;
+}
+</style>
+<body>
+
+	<!-- Aside Start-->
+	{% include "ERP/includes/left_menu.html" %}
+	<!-- Aside Ends-->
+
+
+	<!--Main Content Start -->
+	<section class="content">
+
+		<!-- Header -->
+		{% include "ERP/includes/top_menu.html" %}
+		<!-- Header Ends -->
+
+
+		<!-- Page Content Start -->
+		<!-- ================== -->
+
+		<div class="wraper container-fluid">
+
+<form method="post" name="frm" id="frm" >
+				{% csrf_token %}
+				<div class="page-title">
+					<div class="col-md-6 ">
+						<h3 class="title">{{ module }}</h3>
+					</div>
+					<div class="col-md-6 text-right">
+						<a href="{% url 'ERP:sales_list' %}"> <i
+							class="fa fa-eye fa-2x text-inverse"></i>
+						</a>
+					</div>
+
+				</div>
+				
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title">Sales</h3>
+						</div>
+						<div class="panel-body">
+							<div class="col-sm-12">
+								<div class="col-sm-12">
+									<div class="form-group col-sm-4">
+									 	
+                                         {% default_customer_id  as default_customer_id %} 
+										 {% default_customer_name  as default_customer_name %} 
+										 <input type="text" class="form-control" id="customer_name"
+												name="customer_name" value='{{default_customer_name}}' placeholder="Customer Name">
+										<div class="err_msg" id="customer_name_err"></div>
+										<input type="hidden" class="form-control" id="customer"
+											name="customer" value='{{default_customer_id}}' placeholder="Customer Name">
+									</div>
+									{% current_date  as current_date %}
+									<div class="form-group col-sm-2">
+										 <input type="text"
+											class="form-control" id="sales_date" name="sales_date"
+											value='{{current_date}}' placeholder="Date">
+											<div class="err_msg" id="sales_date_err"></div>
+											
+									</div>
+									<div class="form-group col-sm-2">
+									
+                                       {% drop_down_list tableName="ERP_warehouse" show_field_name="warehouse_name" store_field_name="id" as list_dorp %}
+                                        <select class="form-control" id="warehouse" name="warehouse">
+                                            {% for list_dorp_val in list_dorp %}
+                                                <option value="{{ list_dorp_val.id }}" 
+                                                {% if list_dorp_val.id == data.warehouse_id %}
+    selected="true" 
+    {% endif%}   > {{ list_dorp_val.text }} </option>
+                                            {% endfor %}
+                                        </select>
+                                        <div class="err_msg" id="warehouse_err"></div>
+                                    </div>
+									
+								
+									<div class="form-group col-sm-2">
+									
+										<select class="form-control" name="bill_type" id="bill_type">
+											<option value="1" >Sales Billing</option>
+											<option value="2">Estimate Billing</option>
+											<option value="3">Service Billing</option>
+
+										</select>
+										<div id="service_bill_link" style="display:none";>
+										<a href="javascript:void(O);" onclick="service_items();">Service Items</a>
+										</div>
+				
+									</div>
+									<div class="form-group col-sm-2">
+									<select class="form-control" id="bill_mode" name="bill_mode">
+                                           
+                                                <option value="1"> With Tax</option>
+                                          		<option value="2"> With Out Tax</option>
+                                          
+                                        </select>
+									</div>
+								</div>
+								<div class="col-sm-12">
+									<hr>
+								</div>
+								<div class="col-sm-12">
+
+									<div class="col-sm-8">
+										<input type="text" class="form-control" id="item_name"
+											name="item_name" value='' placeholder="Item Name"> <input
+											type="hidden" class="form-control" id="item" name="item"
+											value='' placeholder="Item Name">
+											<div class="err_msg" id="item_err"></div>
+
+									</div>
+
+									<div class="col-sm-2">
+										<input type="text" class="form-control" id="qty" name="qty"
+											value='' placeholder="Qty">
+											
+											<div class="err_msg" id="qty_err"></div>
+											<div class="success_msg" id="current_stock"></div>
+									</div>
+
+									<div class="col-sm-2">
+									
+									<!-- Hidden Fields  -->
+									
+									<input type="hidden" class="form-control" id="serial_no" name="serial_no"
+											value='' placeholder="">
+											
+											<input type="hidden" class="form-control" id="sales_invoice_id" name="sales_invoice_id"
+											value='' placeholder="hidden">
+									
+									
+									<!-- Hidden Fields End -->
+									
+									
+										<button type="button" class="btn btn-success submit_btn"
+											id="add_stock">Add</button>
+									</div>
+								</div>
+								<div class="col-sm-12">
+									<hr>
+								</div>
+								
+
+
+							</div>
+							<div class="col-sm-12" id="items_div">
+							
+							
+							</div>
+							
+							
+						
+						
+					
+							
+						</div>
+					
+					</div>
+					<!-- panel -->
+				</div>
+				<!-- col -->
+
+			</div>
+			<input type="hidden" name="payment_mode" id="payment_mode">
+			</form>
+			<!-- End row -->
+
+
+			<!-- Form-validation -->
+			<!-- Page Content Ends -->
+			<!-- ================== -->
+
+			<!-- Footer Start -->
+			{% include "ERP/includes/footer.html" %}
+			<!-- Footer Ends -->
+	</section>
+	<!-- Main Content Ends -->
+
+
+	{% include "ERP/includes/js_script.html" %}
+	 {% include "ERP/includes/autocomplete.html" %}
+
+	<!-- js placed at the end of the document so the pages load faster -->
+
+
+
+</body>
+<div class="container">
+<!-- Modal -->
+	<div class="modal fade" id="myModal" role="dialog">
+		<div class="modal-dialog">
+			<form method="post" id="frm_item_edit" name="frm_item_edit">
+			<!-- Modal content-->
+			<div class="modal-content" id="model_content">
+				
+			</div>
+</form>
+		</div>
+	</div>
+
+</div>
+
+	<!-- Modal -->
+<div class="modal fade" id="serviceModel" role="dialog">
+	<div class="modal-dialog">
+		<!-- Modal content-->
+		<div class="modal-content" id="service_model_content">
+
+<div class="modal-body">
+
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Service Items</h4>
+				</div>
+
+				
+				<div class="modal-footer">
+					<button type="button" class="btn btn-success" data-dismiss="modal"
+						onclick="return item_edit_apply();">Save</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+
+
+			
+		</div>
+
+	</div>
+</div>
+
+
+<!-- Mirrored from coderthemes.com/velonic_3.0/admin_4/form-validation.html by HTTrack Website Copier/3.x [XR&CO'2013], Sat, 12 Nov 2016 20:52:50 GMT -->
+</html>
+<script>
+	
+	$(function() {
+		warehouse=$("#warehouse").val();
+		$("#item_name").autocomplete({
+			source : "/erp/autocompletes/salesitem_list_autocomplete?warehouse="+warehouse,
+			select : function(event, ui) { //item selected
+				var selectedObj = ui.item;
+				//alert(JSON.stringify(selectedObj))
+				$("#item").val(selectedObj.id);
+				$("#serial_no").val(selectedObj.serial_no);
+				$("#item").val(selectedObj.id);
+				$("#qty").val(1);
+				$("#qty").focus();
+				current_stock=selectedObj.current_stock
+				unit_name=selectedObj.unit_name
+				$("#current_stock").html("Available stock is "+current_stock+" "+unit_name)
+			},
+			minLength : 2,
+
+		});
+	});
+	$(function() {
+		$("#customer_name").autocomplete({
+			source : "/erp/autocompletes/customer_list_autocomplete/",
+			select : function(event, ui) { //item selected
+				var selectedObj = ui.item;
+				//$("#customer").val(selectedObj.id);
+
+				$("#item_name").focus();
+			},
+			minLength : 2,
+
+		});
+	});
+	$("#add_stock").click(function() {
+		form = $("#frm")
+		qty=$("#qty").val();
+		customer=$("#customer").val();
+		sales_date=$("#sales_date").val();
+		warehouse=$("#warehouse").val();
+		item=$("#item").val();
+		if(customer==""){
+		$("#customer_name_err").html("Required Field");	
+		return false;
+		}
+		if(sales_date==""){
+			$("#sales_date_err").html("Required Field");	
+			return false;
+		}
+		if(warehouse==""){
+			$("#warehouse_err").html("Required Field");	
+			return false;
+		}
+		if(item==""){
+			$("#item_err").html("Required Field");	
+			return false;
+		}
+		if(qty==""){
+			$("#qty_err").html("Required Field");	
+			return false;
+		}
+		
+		$("#add_stock").hide();
+		$.ajax({
+			url : "../items_create/",
+			data : form.serialize(),
+			type : "Post",
+			success : function(data) {
+				id = data.sales_invoice_id;
+				
+				$("#sales_invoice_id").val(id);
+				$("#add_stock").show();
+				
+				if(data.error_mode=="1")
+					{
+					//alert(data.error_details)
+					error_display(data.error_details)
+					}
+				items(id);
+			},
+			error : function(textStatus, errorThrown) {
+				Success = false;//doesnt goes here
+				$("#add_stock").show();
+
+			}
+		});
+	});
+
+	function items_delete(id) {
+		if ($("#action").val() == 2) {
+			url = "../../salesitems_delete";
+		} else {
+			url = "../salesitems_delete";
+		}
+		var x = confirm("Are you sure you want to delete?");
+		if (x) {
+			$.ajax({
+				url : url,
+				data : {
+					"id" : id
+				},
+				contentType : 'application/json',
+
+				success : function(data) {
+					id = data.sales_invoice_id;
+
+					//alert(id);
+					items(id)
+
+				},
+			})
+		} else {
+			return false;
+		}
+	}
+	function service_items_delete(id) {
+		if ($("#action").val() == 2) {
+			url = "../../service_items_delete";
+		} else {
+			url = "../service_items_delete";
+		}
+		var x = confirm("Are you sure you want to delete?");
+		if (x) {
+			$.ajax({
+				url : url,
+				data : {
+					"id" : id
+				},
+				contentType : 'application/json',
+
+				success : function(data) {
+					service_items_show();
+				},
+			})
+		} else {
+			return false;
+		}
+	}
+
+	$(document).ready(function() {
+		$("#submit_frm").click(function() {
+			var x = confirm("Are you sure you want to Submit this entry?");
+			if (x) {
+				return true;
+			} else {
+
+				return false;
+			}
+		});
+		$('#sales_date').datepicker({
+
+			dateFormat : 'dd-mm-yy'
+
+		});
+		id = $("#sales_invoice_id").val();
+		items(id);
+
+	});
+	function items(id) {
+		if ($("#action").val() == 2) {
+			url = "../../sales_items";
+		} else {
+			url = "../sales_items";
+		}
+		$.ajax({
+			url : url,
+			data : {
+				"id" : id
+			},
+			contentType : 'application/json',
+
+			success : function(data) {
+				$("#items_div").html(data);
+				service_items_show();
+				clear_data();
+			},
+
+		})
+	}
+	$("#frm").submit(function(event) {
+		return false;
+	});
+	shortcut.add("F1", function() {
+		// alert("F1 pressed");
+		payment_submit(1)
+
+	});
+	shortcut.add("F2", function() {
+		//alert("F2 pressed");
+		payment_submit(2);
+	});
+	shortcut.add("F3", function() {
+		//alert("F2 pressed");
+		payment_submit(3);
+	});
+	function payment_submit(mode) {
+		form = $("#frm")
+		$("#payment_mode").val(mode);
+		//alert(payment_mode)
+		$.ajax({
+			url : "../salesinvocie_submit/",
+			data : form.serialize(),
+			type : "Post",
+			success : function(data) {
+				if(data.error_mode=="1")
+				{
+				//alert(data.error_details)
+				error_display(data.error_details);
+				return false;
+				}
+				else{
+				id = data.sales_invoice_id;
+				$("#sales_invoice_id").val(id);
+				$("#add_stock").show();
+				url = "../bill_print/" + id;
+				location.reload("../create/");
+				var myWindow = window.open(url, "", "width=460,height=500");
+				}
+
+			},
+			error : function(textStatus, errorThrown) {
+				
+				
+
+			}
+		});
+	}
+	function clear_data() {
+		//alert("fdds");
+		$("#item_name").val("");
+		$("#item").val("");
+		$("#qty").val("");
+		$("#item_name").focus();
+		$(".success_msg").html("");
+	}
+	$("#invoice_discount").keyup(
+					function() {
+
+						invoice_discount = $("#invoice_discount").val();
+						if (invoice_discount > 0) {
+							item_discount = $("#total_item_discount").val();
+							bill_amount = $("#total_bill_amount").val();
+							tax_amount = $("#total_tax_amount").val();
+							net_amount = $("#total_net_amount").val();
+							before_tax = parseFloat(bill_amount)
+									- parseFloat(item_discount);
+							$("#berfore_tax").val(berfore_tax);
+							$("#berfore_tax").val(berfore_tax);
+
+							new_tax_reduce = (parseFloat(tax_amount) / parseFloat(before_tax))
+									* invoice_discount;
+							new_net_amount = parseFloat(net_amount)
+									- parseFloat(invoice_discount);
+							new_tax_amount = parseFloat(tax_amount)
+									- parseFloat(new_tax_reduce);
+
+							$("#tax_div").html(new_tax_amount);
+
+							$("#nettotal_div").html(new_net_amount);
+							new_tax_amount = $("#new_tax_amount").val(
+									new_tax_amount);
+							new_tax_amount = $("#new_net_amount").val(
+									new_net_amount);
+						}
+
+					});
+	function discount_cal(value, mode, row) {
+		bill_amount = $("#item_bill_amount" + row).val();
+		tax_per = $("#item_tax_per" + row).val();
+		//alert(bill_amount);
+		if (mode == "1") {
+			discount_value = $("#item_discount_val" + row).val();
+			//discount_value=$("#item_discount_value"+row).val();
+			if (discount_value > 0) {
+				discount_per = $("#item_discount_per" + row).val(0);
+			}
+			discount_amount = discount_value;
+		}
+		if (mode == "2") {
+
+			discount_per = $("#item_discount_per" + row).val();
+			if (discount_per > 0) {
+				discount_value = $("#item_discount_val" + row).val(0);
+			}
+			discount_amount = parseFloat(bill_amount)
+					* parseFloat(discount_per / 100);
+
+		}
+
+		// $("#item_discount_total"+row).val(''');
+		//discount_amount=discount_amount.toFixed(2);
+		$("#item_discount_total" + row).val(discount_amount);
+		before_tax = parseFloat(bill_amount) - parseFloat(discount_amount);
+		tax_amount = before_tax * tax_per / 100;
+		net_amount = before_tax + tax_amount;
+		//alert(tax_amount);
+		if (row == "0") {
+			$("#tax_amount0").val(tax_amount.toFixed(2));
+			$("#net_amount0").val(net_amount.toFixed(2));
+			//alert(net_amount);
+		} else {
+			$("#item_tax_div" + row).html(tax_amount.toFixed(2));
+			$("#item_net_div" + row).html(net_amount.toFixed(2));
+		}
+
+	}
+	function discount_apply(row) {
+		item_discount_val = $("#item_discount_val" + row).val();
+		item_discount_per = $("#item_discount_per" + row).val();
+		item_discount_total = $("#item_discount_total" + row).val();
+		salesinvoice_item_id = $("#salesinvoice_item_id" + row).val();
+
+		sales_invoice_id = $("#sales_invoice_id").val()
+		var crf_token = $('[name="csrfmiddlewaretoken"]').attr('value');
+		//alert(crf_token);
+		$.ajax({
+			url : "../discount_apply/",
+			data : {
+				"item_discount_val" : item_discount_val,
+				"item_discount_per" : item_discount_per,
+				"item_discount_total" : item_discount_total,
+				"salesinvoice_item_id" : salesinvoice_item_id,
+				"sales_invoice_id" : sales_invoice_id,
+			},
+			type : "Post",
+			headers : {
+				"X-CSRFToken" : crf_token
+			},
+			success : function(data) {
+				id = data.sales_invoice_id;
+				$("#sales_invoice_id").val(id);
+				$("#add_stock").show();
+				items(id);
+			},
+			error : function(textStatus, errorThrown) {
+				Success = false;//doesnt goes here
+				$("#add_stock").show();
+
+			}
+		});
+
+	}
+	function items_edit(salesinvoice_item_id) {
+		var crf_token = $('[name="csrfmiddlewaretoken"]').attr('value');
+		sales_invoice_id = $("#sales_invoice_id").val();
+		$.ajax({
+			url : "../sales_item_detail/",
+			data : {
+				"salesinvoice_item_id" : salesinvoice_item_id,
+				"sales_invoice_id" : sales_invoice_id
+			},
+			type : "Post",
+			headers : {
+				"X-CSRFToken" : crf_token
+			},
+			success : function(data) {
+				id = data.sales_invoice_id;
+				$('#myModal').modal('show');
+				$("#model_content").html(data);
+				//items(id);
+			},
+			error : function(textStatus, errorThrown) {
+				Success = false;
+
+			}
+		});
+		
+	}
+	function item_edit_apply() {
+		var crf_token = $('[name="csrfmiddlewaretoken"]').attr('value');
+		form = $("#frm_item_edit")
+
+		$.ajax({
+			url : "../item_edit_apply/",
+			data : form.serialize(),
+			type : "Post",
+			headers : {
+				"X-CSRFToken" : crf_token
+			},
+			success : function(data) {
+				id = data.sales_invoice_id;
+				$("#sales_invoice_id").val(id);
+				//$("#add_stock").show();
+				items(id);
+			},
+			error : function(textStatus, errorThrown) {
+				Success = false;//doesnt goes here
+				$("#add_stock").show();
+
+			}
+		});
+	}
+	function error_display(errors){
+		
+		message=errors.Error.message;
+		display_error=message;
+		//alert(JSON.stringify(errors))
+		error_details=errors.Error.error_details;
+		if(error_details){
+			//var error_details = JSON.parse(error_details);
+			error_details.forEach(function(error){
+				display_error=display_error+"\n"+error.field+"->"+error.message;
+	        	});
+		}
+		alert(display_error);
+		
+	}
+	$("#bill_type").change(function(){
+		$("#service_bill_link").hide();
+		if($("#bill_type").val()==3){
+			$("#service_bill_link").show();
+			
+		}
+	});
+	function service_items () {
+		$('#serviceModel').modal('show');
+		var crf_token = $('[name="csrfmiddlewaretoken"]').attr('value');
+		sales_invoice_id = $("#sales_invoice_id").val();
+		$.ajax({
+			url : "../service_items/",
+			data : {
+				"sales_invoice_id" : sales_invoice_id
+			},
+			type : "Post",
+			headers : {
+				"X-CSRFToken" : crf_token
+			},
+			success : function(data) {
+				$("#service_model_content").html(data);
+				$('#serviceModel').modal('show');
+				service_items_auto();
+			},
+			error : function(textStatus, errorThrown) {
+				Success = false;
+
+			}
+		});
+		
+		//$("#service_model_content").html("");
+	}
+	function service_items_auto(){
+		
+		$("#service_item_name")
+		.autocomplete(
+				{ 
+					source : "/erp/autocompletes/salesitem_list_autocomplete?warehouse="
+							+ warehouse,
+					select : function(event, ui) { //item selected
+						var selectedObj = ui.item;
+						//alert(JSON.stringify(selectedObj))
+						$("#service_item").val(selectedObj.id);
+						$("#service_serial_no").val(selectedObj.serial_no);
+						$("#service_item_qty").val(1);
+						$("#service_item_qty").focus();
+						$("#service_item_rate").val(selectedObj.price);
+						service_amount_calculation();
+						//current_stock = selectedObj.current_stock
+						//unit_name = selectedObj.unit_name
+					
+					},
+					minLength : 2,
+					appendTo: "#serviceModel"
+
+					
+
+				});
+		
+	}
+	function service_amount_calculation(){
+		service_item_qty=$("#service_item_qty").val();
+		service_item_rate=$("#service_item_rate").val();
+		amount=service_item_qty*service_item_rate;
+		$("#service_item_amount").val(amount);
+	}
+	function service_items_add(){		
+		var crf_token = $('[name="csrfmiddlewaretoken"]').attr('value');
+		sales_invoice_id = $("#sales_invoice_id").val();
+		warehouse=$("#warehouse").val();
+		service_item_for=$("#service_item_for").val();
+		service_item=$("#service_item").val();
+		service_item_qty=$("#service_item_qty").val();
+		service_item_amount=$("#service_item_amount").val();
+		service_item_rate=$("#service_item_rate").val();
+		service_serial_no=$("#service_serial_no").val();
+		service_batch_no=$("#service_batch_no").val();
+		$.ajax({
+			url : "../service_items_add/",
+			data : {
+				"sales_invoice_id" : sales_invoice_id,
+				"service_item_for" : service_item_for,
+				"service_item" : service_item,
+				"service_item_qty" : service_item_qty,
+				"service_item_amount" : service_item_amount,
+				"service_item_rate" : service_item_rate,
+				"warehouse" : warehouse,
+				"servive_serial_nos" : service_serial_no,
+				"service_batch_no" : service_batch_no,
+			},
+			type : "Post",
+			headers : {
+				"X-CSRFToken" : crf_token
+			},
+			success : function(data) {
+				
+				service_items_show();
+			},
+			error : function(textStatus, errorThrown) {
+				Success = false;
+
+			}
+		});
+	}
+	function service_items_show(){
+		
+		var crf_token = $('[name="csrfmiddlewaretoken"]').attr('value');
+		sales_invoice_id = $("#sales_invoice_id").val();
+		$.ajax({
+			url : "../service_items_show/",
+			data : {
+				"sales_invoice_id" : sales_invoice_id
+			},
+			type : "Post",
+			headers : {
+				"X-CSRFToken" : crf_token
+			},
+			success : function(data) {
+				$("#service_items_div").html(data);
+				
+			},
+			error : function(textStatus, errorThrown) {
+				Success = false;
+
+			}
+		});
+	}
+</script>
